@@ -14,7 +14,9 @@ What do you need to run ts_check
 * Python 3
 * xfreerdp package
 
-> Installing graphcal interface:
+### Installing graphical interface
+
+* As root:
 
 ```shell
  yum groups list
@@ -31,6 +33,8 @@ What do you need to run ts_check
 
 > Preparing system for Nagios use start RDP session remotely:
 
+* As the user that runs the script, inside GUI:
+
 ```shell
  gnome-control-center display - adjust resolution to fit your needs
 ```
@@ -41,26 +45,25 @@ What do you need to run ts_check
  gnome-control-center privacy - Turn off block screen
 ```
 
-![Lock Screen](https://github.com/FernandoRD/ts_check/blob/main/images/picture2.png)
+![Block Screen](https://github.com/FernandoRD/ts_check/blob/main/images/picture2.png)
 
 ```shell
  gnome-control-center energy - "Turn off screen" - Adjust to Never
 ```
 
-![Lock Screen](https://github.com/FernandoRD/ts_check/blob/main/images/picture4.png)
+![Turn off Screen](https://github.com/FernandoRD/ts_check/blob/main/images/picture4.png)
 
-Define automatic login for user
+* Define automatic login for user
 
-![Lock Screen](https://github.com/FernandoRD/ts_check/blob/main/images/picture3.png)
+![Automatic Login](https://github.com/FernandoRD/ts_check/blob/main/images/picture3.png)
 
-As root alter /var/run/gdm permissions:
+* As root alter /var/run/gdm permissions:
 
 ```shell
  chmod 755 /var/run/gdm
 ```
 
-no diretorio do usuário que executa o script:
-In the user´s directory:
+* Create a symbolic lynk in the user´s directory:
 
 ```shell
  ln -s /var/run/gdm/auth-for-user-XXX/database .Xauthority
@@ -83,32 +86,54 @@ Quickest way...
     #nagios ALL=NOPASSWD: /usr/local/nagios/libexec/check_asterisk_sip_peers.sh, /usr/local/nagios/libexec/nagisk.pl, /usr/sbin/asterisk
 ```
 
+### NRPE Configuration
 
-### Initial Configuration
+> Before running you need to configure nrpe to execute the plugin.
 
-Before running you need to fill the two text files, servers.txt and tokens.txt in the following way:
+* Edit the nrpe.cfg
 
 ```shell
-$ nano servers.txt
-test1:192.168.0.1
-test2:192.168.0.2
-test3:192.168.0.3
-
-$ nano tokens.txt
-test1:845gbjukUjI6eaNujgUnfohtdFPTZb3JAEH05rWcdrXbvxjh7lh6jnZfTJJTl8m
-test2:ponvt666atI6eaNoprq08sUEqqgi873vEH05rWxdrkXbvgjh7lh6jnZfTJJTl8m
-test3:yuhnbrtdteI6eaNoprq08sUEFPTZb3JAxH05rWcdrkXbvgjh7lh6jnZfTJJTl8m
+ nano /usr/local/nagios/etc/nrpe.cfg
 ```
+
+* Append to end of the file:
+
+```shell
+ command[ts_check]=sudo /home/nagios/tscheck/ts_check.sh $ARG1
+```
+
+* Restart NRPE:
+
+```shell
+ service xinetd restart
+```
+
+### Nagios Configuration
+
+![Nagios Config](https://github.com/FernandoRD/ts_check/blob/main/images/picture5.png)
+
+> Parameters options:
+
+* -H \<host_name or IP\>
+* -u \<ts_user\>
+* -p \<ts_user password\>
+* -r \<resilience int\>
+* -c \<confidence float\>
+* -x \<xfreerdp path\>
+
+### Example of $ARG1$
+
+-a '-H 192.168.0.100 -u ts_user -p foo -r 3 -c 0.8 -x xfreerdp'
+
+> Tip: Command takes a wile to execute, it is better to create a nrpe command with a timeout of 60 sec
 
 ## Developing
 
 Feel free to download, use e modify it:
 
 ```shell
-git clone https://github.com/FernandoRD/NagiosXI_api.git
+ git clone https://github.com/FernandoRD/ts_check.git
 ```
-
-## Features
 
 ## Licensing
 
