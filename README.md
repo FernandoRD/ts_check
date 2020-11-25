@@ -125,7 +125,11 @@ Quickest way...
 
 -a '-H 192.168.0.100 -u ts_user -p foo -r 3 -c 0.8 -x xfreerdp'
 
-> Tip: Command takes a wile to execute, it is better to create a nrpe command with a timeout of 60 sec
+> Tip: Command takes a wile to execute, it is better to create a nrpe command with a timeout of 60 sec.
+
+### Final preparation
+
+You gonna find 3 .png files together with the scripts. They´re used in the image recognition, take the screeshots that suits your enviroment. (Those are taken from WinXP for testing)
 
 ## Developing
 
@@ -134,6 +138,12 @@ Feel free to download, use e modify it:
 ```shell
  git clone https://github.com/FernandoRD/ts_check.git
 ```
+
+## Credits
+
+Thanks to Kian Brose <https://github.com/KianBrose>
+
+With the image recognition insigts.
 
 ## Licensing
 
