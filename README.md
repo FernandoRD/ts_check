@@ -25,11 +25,11 @@ What do you need to run ts_check
 ### Installing python3 and other dependencies
 
 ```shell
+ wget http://packages.psychotic.ninja/7/base/x86_64/RPMS/psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
+ sudo rpm -Uvh psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
+ sudo yum --enablerepo=psychotic install scrot
  sudo yum install python3 python3-tkinter python3-devel
  pip3 install keyboard pyautogui numpy==1.19.3 Pillow opencv-contrib-python
- wget http://packages.psychotic.ninja/7/base/x86_64/RPMS/psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
- sudo rpm -psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
- sudo yum --enablerepo=psychotic install scrot
  ```
 
 ### Installing xfreerdp
@@ -38,6 +38,30 @@ What do you need to run ts_check
  sudo yum install xfreerdp
 ```
 
+### OPTIONAL: Install x11VNC and make it connect at default screen for remote management
+
+```shell
+ sudo yum install x11vnc
+ sudo x11vnc -storepasswd yourVNCpasswordHERE /etc/x11vnc.pass
+ sudo nano /usr/lib/systemd/system/x11vnc.service
+    [Unit]
+    Description="x11vnc"
+    Requires=display-manager.service
+    After=display-manager.service
+
+    [Service]
+    ExecStart=/usr/bin/x11vnc -xkb -noxrecord -noxfixes -noxdamage -display :0 -auth guess -rfbauth /etc/x11vnc.pass
+    ExecStop=/usr/bin/killall x11vnc
+    Restart=on-failure
+    Restart-sec=2
+
+    [Install]
+    WantedBy=multi-user.target
+
+ sudo systemctl daemon-reload && sudo systemctl enable x11vnc && sudo systemctl start x11vnc
+
+ sudo reboot
+```
 
 > Preparing system for Nagios use start RDP session remotely:
 
@@ -65,16 +89,16 @@ What do you need to run ts_check
 
 ![Automatic Login](https://github.com/FernandoRD/ts_check/blob/main/images/picture3.png)
 
-* As root alter /var/run/gdm permissions:
+* Alter /var/run/gdm permissions:
 
 ```shell
- chmod 755 /var/run/gdm
+ sudo chmod 755 /var/run/gdm
 ```
 
 * Create a symbolic lynk in the user´s directory:
 
 ```shell
- ln -s /var/run/gdm/auth-for-user-XXX/database .Xauthority
+ sudo ln -s /var/run/gdm/auth-for-user-XXX/database .Xauthority
 ```
 
 This link will become broken at each reboot of the server, because the XXX value chenges, but the shell script handle to lokk at it.
