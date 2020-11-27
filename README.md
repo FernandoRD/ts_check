@@ -16,20 +16,28 @@ What do you need to run ts_check
 
 ### Installing graphical interface
 
-* As root:
+```shell
+ sudo yum groups list
+ sudo yum groups install "Servidor com GUI"
+ sudo systemctl set-default graphical.target
+```
+
+### Installing python3 and other dependencies
 
 ```shell
- yum groups list
- yum groups install "Servidor com GUI"
- systemctl set-default graphical.target
- yum install xfreerdp
- yum install python3-tkinter python3-devel
- pip install keyboard pyautogui numpy==1.19.3 Pillow opencv-contrib-python
-
+ sudo yum install python3 python3-tkinter python3-devel
+ pip3 install keyboard pyautogui numpy==1.19.3 Pillow opencv-contrib-python
  wget http://packages.psychotic.ninja/7/base/x86_64/RPMS/psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
- rpm -psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
- yum --enablerepo=psychotic install scrot
+ sudo rpm -psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
+ sudo yum --enablerepo=psychotic install scrot
+ ```
+
+### Installing xfreerdp
+
+```shell
+ sudo yum install xfreerdp
 ```
+
 
 > Preparing system for Nagios use start RDP session remotely:
 
