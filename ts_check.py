@@ -1,8 +1,3 @@
-#!/usr/bin/python3
-
-#pip install keyboard pyautogui numpy==1.19.3 Pillow opencv-contrib-python
-
-
 import pyautogui
 import time 
 import keyboard 
@@ -13,9 +8,12 @@ import os
 import sys, getopt
 
 def usage():
-    print("Usage: ./tscheck.py [-H HOST] [-u user_login] [-p user_password] [-r resilience] [-c confidence]")
+    print("Usage: ./tscheck.sh [-H HOST] [-u user_login] [-p user_password] [-r resilience] [-c confidence]")
 
 def main(argv):
+
+#    f = open(os.devnull, 'w')
+#    sys.stderr = f
 
     freerdpLocation = ""
     host = ""
@@ -23,9 +21,6 @@ def main(argv):
     password = ""
     resilience = ""
     confidenceValue = ""
-
-    f = open(os.devnull, 'w')
-    sys.stderr = f
 
     try:
         opts, args = getopt.getopt(argv,"h?:H:u:p:x:r:c:")
@@ -62,7 +57,7 @@ def main(argv):
     count = 0
     while count < 5:
         try:
-            x,y = pyautogui.locateCenterOnScreen('/home/fernando/tscheck/print.png', grayscale=True, confidence=float(confidenceValue))
+            x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/print.png", grayscale=True, confidence=float(confidenceValue))
         except Exception as e:
             ERRO += 1
         else:
@@ -70,48 +65,58 @@ def main(argv):
 
         count += 1
         time.sleep(1)
-    
+
+    falhaBotaoFecha = 0
+    falhaBotaoIniciar = 0
+    falhaBotaoExecutar = 0
+    falhaExecutar = 0
+
     if ERRO > 0:
         for i in range(int(resilience)):
             try:
-                x,y = pyautogui.locateCenterOnScreen("/home/fernando/tscheck/botao_fecha.png", grayscale=True, confidence=float(confidenceValue))
+                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/botao_fecha.png", grayscale=True, confidence=float(confidenceValue))
                 time.sleep(0.5)
             except Exception as e:
-                print("Botao fecha {}".format(e))
+                falhaBotaoFecha += 1
+                #print("Botao fecha {}".format(e))
             else:
                 time.sleep(1)
                 pyautogui.moveTo(x,y)
                 time.sleep(1)
                 pyautogui.click()
                 print("Falha na conexao RDP!")
+                print("Estatistica (Falhas de reconhecimento): B_Iniciar: {}, B_Exec: {}, Executar: {}".format(falhaBotaoIniciar, falhaBotaoExecutar, falhaExecutar))
                 exit(2)
     else:
         for i in range(int(resilience)):
             try:
-                x,y = pyautogui.locateCenterOnScreen("/home/fernando/tscheck/botao_iniciar.png", grayscale=True, confidence=float(confidenceValue))
+                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/botao_iniciar.png", grayscale=True, confidence=float(confidenceValue))
                 time.sleep(0.5)
             except Exception as e:
-                print("Botao iniciar {}".format(e))
+                falhaBotaoIniciar += 1
+                #print("Botao iniciar {}".format(e))
             else:
                 pyautogui.moveTo(x,y)
                 time.sleep(1)
                 pyautogui.click()
                 for i in range(int(resilience)):
                     try:
-                        x,y = pyautogui.locateCenterOnScreen("/home/fernando/tscheck/botao_executar.png", grayscale=True, confidence=float(confidenceValue))
+                        x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/botao_executar.png", grayscale=True, confidence=float(confidenceValue))
                         time.sleep(0.5)
                     except Exception as e:
-                        print("Botao executar {}".format(e))
+                        falhaBotaoExecutar += 1
+                        #print("Botao executar {}".format(e))
                     else:
                         pyautogui.moveTo(x,y-10)
                         time.sleep(1)            
                         pyautogui.click()
                         for i in range(int(resilience)):
                             try:
-                                x,y = pyautogui.locateCenterOnScreen("/home/fernando/tscheck/executar.png", grayscale=True, confidence=float(confidenceValue))
+                                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/executar.png", grayscale=True, confidence=float(confidenceValue))
                                 time.sleep(0.5)
                             except Exception as e:
-                                print("executar {}".format(e))
+                                falhaExecutar += 1
+                                #print("executar {}".format(e))
                             else:
                                 pyautogui.moveTo(x,y)
                                 time.sleep(1)
@@ -120,6 +125,7 @@ def main(argv):
                                 pyautogui.typewrite(['backspace','backspace','backspace','backspace','backspace','backspace','backspace','backspace', ], interval=0.1)
                                 pyautogui.typewrite('logoff\n', interval=0.1)
                                 print("Conexao RDP realizada com sucesso!")
+                                print("Estatistica (Falhas de reconhecimento): B_Iniciar: {}, B_Exec: {}, Executar: {}".format(falhaBotaoIniciar, falhaBotaoExecutar, falhaExecutar))
                                 exit(0)
 
 if __name__ == "__main__":
