@@ -65,7 +65,7 @@ What do you need to run ts_check
 
 > Preparing system for Nagios use start RDP session remotely:
 
-* As the user that runs the script, inside GUI:
+* As the user that runs the script (nagios), inside GUI:
 
 ```shell
  gnome-control-center display - adjust resolution to fit your needs
@@ -85,7 +85,7 @@ What do you need to run ts_check
 
 ![Turn off Screen](https://github.com/FernandoRD/ts_check/blob/main/images/picture4.png)
 
-* Define automatic login for user
+* Define automatic login for user nagios
 
 ![Automatic Login](https://github.com/FernandoRD/ts_check/blob/main/images/picture3.png)
 
@@ -98,12 +98,12 @@ What do you need to run ts_check
 * Create a symbolic lynk in the user´s directory:
 
 ```shell
- sudo ln -s /var/run/gdm/auth-for-user-XXX/database .Xauthority
+ sudo ln -s /var/run/gdm/auth-for-nagios-XXX/database .Xauthority
 ```
 
-This link will become broken at each reboot of the server, because the XXX value chenges, but the shell script handle to lokk at it.
+This link will become broken at each reboot of the server, because the XXX value changes, but the shell script handle to look at it.
 
-Edit /etc/sudoers for user that runs the script (ex: nagios)
+Edit /etc/sudoers for user nagios that runs the script
 Quickest way...
 
 ```shell
@@ -118,21 +118,54 @@ Quickest way...
     #nagios ALL=NOPASSWD: /usr/local/nagios/libexec/check_asterisk_sip_peers.sh, /usr/local/nagios/libexec/nagisk.pl, /usr/sbin/asterisk
 ```
 
-### NRPE Configuration
+### Connection Configuration
 
-> Before running you need to configure nrpe to execute the plugin.
+> This time the script uses a ssh connection to execute, due to several problems that occured trying to make nrpe runs it properly.
 
-* Edit the nrpe.cfg
+* Creating ssh key to passwordless connection between Nagios and the Linux GUI Server.
 
-```shell
- nano /usr/local/nagios/etc/nrpe.cfg
-```
-
-* Append to end of the file:
+> At Nagios server in nagio´s user dir:
 
 ```shell
- command[ts_check]=sudo /home/nagios/tscheck/ts_check.sh $ARG1
+ ssh-keygen
+ Generating public/private rsa key pair.
+ Enter file in which to save the key (/home/nagios/.ssh/id_rsa): 
 ```
+> You may choose the default or create a key for this connection
+
+```shell
+ Enter file in which to save the key (/home/nagios/.ssh/id_rsa): monitor
+ Enter passphrase (empty for no passphrase):
+ Enter same passphrase again:
+ Your identification has been saved in monitor.
+ Your public key has been saved in monitor.pub.
+```
+> After you need to send the key to the Linux GUI Server:
+
+```shell
+ ssh-copy-id -i monitor nagios@Linux_GUI_Server_IP 
+```
+> Test the connection:
+
+```shell
+ ssh -i monitor nagios@Linux_GUI_Server_IP
+```
+You must connect directly without having to type a password...
+
+
+> Copy the plugin scripts (ts_check.sh and ts_check.py) to nagios´s libexec directory:
+
+```shell
+ cp ts_check* /usr/local/nagios/libexec/
+```
+
+> Create an tscheck dir inside libexec to store the pictures the script will use:
+
+```shell
+mkdir /usr/local/nagios/libexec/tscheck 
+```
+
+
 
 * Restart NRPE:
 
