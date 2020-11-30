@@ -55,7 +55,7 @@ This project is a python 3 script, aided with a shell script that allows Nagios 
  sudo reboot
 ```
 
-## Preparing system for Nagios use start RDP session remotely:
+## Preparing system for Nagios use start RDP session remotely
 
 * As the user that runs the script (nagios), inside GUI:
 
@@ -159,6 +159,7 @@ You must connect directly without having to type a password...
 ```shell
 mkdir /usr/local/nagios/libexec/tscheck
 ```
+
 ## Script execution
 
 When Nagios calls the script it connects to the windows server and recognizes if the connection was successfull or not, and then executes some procedures.
@@ -193,12 +194,13 @@ The pictures are actually used for the logoff process, that could be OK or NOK.
 
 ## Nagios Configuration
 
-
+### Active checking
 
 ![Nagios Config](https://github.com/FernandoRD/ts_check/blob/main/images/picture5.png)
 
 > Check_by_ssh parameters options:
-* -t \<timeout\> 
+
+* -t \<timeout\>
 * -i \<created ssh key location\>
 * -C \<ssh command to execute\>
 
