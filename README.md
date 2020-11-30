@@ -223,6 +223,10 @@ The pictures are actually used for the logoff process, that could be OK or NOK.
 
 > Tip: Command takes a wile to execute, it is better to use at least a timeout of 60 sec.
 
+### Passive checking
+
+Comming soon...
+
 ## Developing
 
 Feel free to download, use e modify it:
