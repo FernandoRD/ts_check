@@ -6,15 +6,7 @@
 
 This project is a python 3 script, aided with a shell script that allows Nagios open a graphcal TS session from an Linux server with a GUI installed.
 
-## Installing / Getting started
-
-What do you need to run ts_check
-
-* Linux server with GUI installed
-* Python 3
-* xfreerdp package
-
-### Installing graphical interface
+## Installing graphical interface
 
 ```shell
  sudo yum groups list
@@ -22,7 +14,7 @@ What do you need to run ts_check
  sudo systemctl set-default graphical.target
 ```
 
-### Installing python3 and other dependencies
+## Installing python3 and other dependencies
 
 ```shell
  wget http://packages.psychotic.ninja/7/base/x86_64/RPMS/psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
@@ -32,13 +24,13 @@ What do you need to run ts_check
  pip3 install keyboard pyautogui numpy==1.19.3 Pillow opencv-contrib-python
  ```
 
-### Installing xfreerdp
+## Installing xfreerdp
 
 ```shell
  sudo yum install xfreerdp
 ```
 
-### OPTIONAL: Install x11VNC and make it connect at default screen for remote management
+## OPTIONAL: Install x11VNC and make it connect at default screen for remote management
 
 ```shell
  sudo yum install x11vnc
@@ -63,7 +55,7 @@ What do you need to run ts_check
  sudo reboot
 ```
 
-> Preparing system for Nagios use start RDP session remotely:
+## Preparing system for Nagios use start RDP session remotely:
 
 * As the user that runs the script (nagios), inside GUI:
 
@@ -118,7 +110,7 @@ Quickest way...
     #nagios ALL=NOPASSWD: /usr/local/nagios/libexec/check_asterisk_sip_peers.sh, /usr/local/nagios/libexec/nagisk.pl, /usr/sbin/asterisk
 ```
 
-### Connection Configuration
+## Connection Configuration
 
 > This time the script uses a ssh connection to execute, due to several problems that occured trying to make nrpe runs it properly.
 
@@ -167,6 +159,9 @@ You must connect directly without having to type a password...
 ```shell
 mkdir /usr/local/nagios/libexec/tscheck
 ```
+## Script execution
+
+When Nagios calls the script it connects to the windows server and recognizes if the connection was successfull or not, and then executes some procedures.
 
 ### Pictures used in the actual script version
 
@@ -196,15 +191,18 @@ The pictures are actually used for the logoff process, that could be OK or NOK.
 
 * The script uses a function that will click at the center of the pictures, be carefull when take the prints to keep where do you want to click as colse to the center as possible. You may do some adjustments by increasing or decreasing the x and y variables accordingly.
 
-```shell
- service xinetd restart
-```
+## Nagios Configuration
 
-### Nagios Configuration
+
 
 ![Nagios Config](https://github.com/FernandoRD/ts_check/blob/main/images/picture5.png)
 
-> Parameters options:
+> Check_by_ssh parameters options:
+* -t \<timeout\> 
+* -i \<created ssh key location\>
+* -C \<ssh command to execute\>
+
+> ts_check parameters options:
 
 * -H \<host_name or IP\>
 * -u \<ts_user\>
@@ -215,13 +213,13 @@ The pictures are actually used for the logoff process, that could be OK or NOK.
 
 ### Example of $ARG1$
 
--a '-H 192.168.0.100 -u ts_user -p foo -r 3 -c 0.8 -x xfreerdp'
+-t 60 -i /home/nagios/.ssh/monitoramento
 
-> Tip: Command takes a wile to execute, it is better to create a nrpe command with a timeout of 60 sec.
+### Example of $ARG2$
 
-### Final preparation
+-C "/usr/local/nagios/libexec/ts_check.sh -H 192.168.0.109 -u rdp_win_user -p foo -x xfreerdp -r 3 -c 0.8"
 
-You gonna find 3 .png files together with the scripts. They´re used in the image recognition, take the screeshots that suits your enviroment. (Those are taken from WinXP for testing)
+> Tip: Command takes a wile to execute, it is better to use at least a timeout of 60 sec.
 
 ## Developing
 
