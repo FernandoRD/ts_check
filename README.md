@@ -129,8 +129,9 @@ Quickest way...
 ```shell
  ssh-keygen
  Generating public/private rsa key pair.
- Enter file in which to save the key (/home/nagios/.ssh/id_rsa): 
+ Enter file in which to save the key (/home/nagios/.ssh/id_rsa):
 ```
+
 > You may choose the default or create a key for this connection
 
 ```shell
@@ -140,18 +141,20 @@ Quickest way...
  Your identification has been saved in monitor.
  Your public key has been saved in monitor.pub.
 ```
+
 > After you need to send the key to the Linux GUI Server:
 
 ```shell
- ssh-copy-id -i monitor nagios@Linux_GUI_Server_IP 
+ ssh-copy-id -i monitor nagios@Linux_GUI_Server_IP
 ```
+
 > Test the connection:
 
 ```shell
  ssh -i monitor nagios@Linux_GUI_Server_IP
 ```
-You must connect directly without having to type a password...
 
+You must connect directly without having to type a password...
 
 > Copy the plugin scripts (ts_check.sh and ts_check.py) to nagios´s libexec directory:
 
@@ -162,12 +165,36 @@ You must connect directly without having to type a password...
 > Create an tscheck dir inside libexec to store the pictures the script will use:
 
 ```shell
-mkdir /usr/local/nagios/libexec/tscheck 
+mkdir /usr/local/nagios/libexec/tscheck
 ```
 
+### Pictures used in the actual script version
 
+The pictures are actually used for the logoff process, that could be OK or NOK.
 
-* Restart NRPE:
+* print.png
+* button_close.png
+* button_start.png
+* button_execute.png
+* dialog_execute.png
+
+### Sequence
+
+> For an OK connection
+
+1) Reads print.png to check if the screen element apears.
+2) Reads button_start.png to click in start.
+3) Reads button_exec.png to open exec dialog box
+4) Reads dialog_exec.png to click in the field and writes "logoff" and send an ENTER
+
+> For a NOK connection
+
+1) Reads button_close.png to close the RDP window in gnome.
+2) Obs:
+
+* There are some WindowsXP pictures in the repository that I used to develop
+
+* The script uses a function that will click at the center of the pictures, be carefull when take the prints to keep where do you want to click as colse to the center as possible. You may do some adjustments by increasing or decreasing the x and y variables accordingly.
 
 ```shell
  service xinetd restart

@@ -74,7 +74,7 @@ def main(argv):
     if ERRO > 0:
         for i in range(int(resilience)):
             try:
-                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/botao_fecha.png", grayscale=True, confidence=float(confidenceValue))
+                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/button_close.png", grayscale=True, confidence=float(confidenceValue))
                 time.sleep(0.5)
             except Exception as e:
                 falhaBotaoFecha += 1
@@ -90,7 +90,7 @@ def main(argv):
     else:
         for i in range(int(resilience)):
             try:
-                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/botao_iniciar.png", grayscale=True, confidence=float(confidenceValue))
+                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/button_start.png", grayscale=True, confidence=float(confidenceValue))
                 time.sleep(0.5)
             except Exception as e:
                 falhaBotaoIniciar += 1
@@ -101,7 +101,7 @@ def main(argv):
                 pyautogui.click()
                 for i in range(int(resilience)):
                     try:
-                        x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/botao_executar.png", grayscale=True, confidence=float(confidenceValue))
+                        x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/button_exec.png", grayscale=True, confidence=float(confidenceValue))
                         time.sleep(0.5)
                     except Exception as e:
                         falhaBotaoExecutar += 1
@@ -112,7 +112,7 @@ def main(argv):
                         pyautogui.click()
                         for i in range(int(resilience)):
                             try:
-                                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/executar.png", grayscale=True, confidence=float(confidenceValue))
+                                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/dialog_exec.png", grayscale=True, confidence=float(confidenceValue))
                                 time.sleep(0.5)
                             except Exception as e:
                                 falhaExecutar += 1
