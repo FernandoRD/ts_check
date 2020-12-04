@@ -1,10 +1,10 @@
-import os
-import time
 import pyautogui
+import time 
 import keyboard 
 import random
 import cv2
 import time
+import os
 import sys, getopt
 
 def usage():
@@ -49,7 +49,7 @@ def main(argv):
         usage()
         sys.exit(2)
         
-    execCommand = "{} /v:{} /u:{} /p:{} >/dev/null 2>&1 &".format(freerdpLocation, host, user, password)
+    execCommand = "DISPLAY=:0.0 {} /v:{} /u:{} /p:{} > /dev/null 2>&1 &".format(freerdpLocation, host, user, password)
     os.system(execCommand)
 
     time.sleep(5)
@@ -57,8 +57,8 @@ def main(argv):
     count = 0
     while count < 5:
         try:
-            x,y = pyautogui.locateCenterOnScreen("/home/nagios/tscheck/print.png", grayscale=True, confidence=float(confidenceValue))
-        except Exception:
+            x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/print.png", grayscale=True, confidence=float(confidenceValue))
+        except Exception as e:
             ERRO += 1
         else:
             ERRO -= 1 
@@ -71,38 +71,52 @@ def main(argv):
     falhaBotaoExecutar = 0
     falhaExecutar = 0
 
-#    print("ERRO = "+str(ERRO))
-
     if ERRO > 0:
-        print("Falha na conexao RDP!")
-        exit(2)
+        for i in range(int(resilience)):
+            try:
+                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/button_close.png", grayscale=True, confidence=float(confidenceValue))
+                time.sleep(0.5)
+            except Exception as e:
+                falhaBotaoFecha += 1
+                #print("Botao fecha {}".format(e))
+            else:
+                time.sleep(1)
+                pyautogui.moveTo(x,y)
+                time.sleep(1)
+                pyautogui.click()
+                print("Falha na conexao RDP!")
+                print("Estatistica (Falhas de reconhecimento): B_Iniciar: {}, B_Exec: {}, Executar: {}".format(falhaBotaoIniciar, falhaBotaoExecutar, falhaExecutar))
+                exit(2)
     else:
         for i in range(int(resilience)):
             try:
-                x,y = pyautogui.locateCenterOnScreen("/home/nagios/tscheck/botao_iniciar.png", grayscale=True, confidence=float(confidenceValue))
+                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/button_start.png", grayscale=True, confidence=float(confidenceValue))
                 time.sleep(0.5)
             except Exception as e:
                 falhaBotaoIniciar += 1
+                #print("Botao iniciar {}".format(e))
             else:
                 pyautogui.moveTo(x,y)
                 time.sleep(1)
                 pyautogui.click()
                 for i in range(int(resilience)):
                     try:
-                        x,y = pyautogui.locateCenterOnScreen("/home/nagios/tscheck/botao_executar.png", grayscale=True, confidence=float(confidenceValue))
+                        x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/button_exec.png", grayscale=True, confidence=float(confidenceValue))
                         time.sleep(0.5)
                     except Exception as e:
                         falhaBotaoExecutar += 1
+                        #print("Botao executar {}".format(e))
                     else:
                         pyautogui.moveTo(x,y-10)
                         time.sleep(1)            
                         pyautogui.click()
                         for i in range(int(resilience)):
                             try:
-                                x,y = pyautogui.locateCenterOnScreen("/home/nagios/tscheck/executar.png", grayscale=True, confidence=float(confidenceValue))
+                                x,y = pyautogui.locateCenterOnScreen("/usr/local/nagios/libexec/tscheck/dialog_exec.png", grayscale=True, confidence=float(confidenceValue))
                                 time.sleep(0.5)
                             except Exception as e:
                                 falhaExecutar += 1
+                                #print("executar {}".format(e))
                             else:
                                 pyautogui.moveTo(x,y)
                                 time.sleep(1)
