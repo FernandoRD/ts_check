@@ -1,19 +1,6 @@
 #!/bin/bash
 
-export DISPLAY=:0.0
-
-sudo xinit & >/dev/null 2>&1
-
-sudo mv /root/.Xauthority /root/old.Xauthority
-sudo touch /root/.Xauthority
-sudo xauth generate :0 . trusted
-#sudo xauth add ${HOST}:0 /root/. $(xxd -l 16 -p /dev/urandom)
-
-sudo cp /root/.Xauthority /home/nagios/.Xauthority
-sudo chown nagios.nagios /home/nagios/.Xauthority
-
-#sudo startx & >/dev/null 2>&1
-
+SESSION_DISPLAY=""
 HOST=""
 USER=""
 PASSWORD=""
@@ -22,7 +9,7 @@ RESILIENCE=""
 CONFIDENCE_VALUE=""
 SYSUSER=nagios
 
-while getopts H:u:p:x:r:c: opt 
+while getopts H:u:p:x:r:c:d: opt 
 do
 	case "$opt" in
 		H) HOST=$OPTARG;;
@@ -31,9 +18,25 @@ do
 		x) EXECUTABLE=$OPTARG;;
 		r) RESILIENCE=$OPTARG;;
 		c) CONFIDENCE_VALUE=$OPTARG;;
+		d) SESSION_DISPLAY=$OPTARG;;
 	esac 
 
 done
+
+export DISPLAY=:$SESSION_DISPLAY.0
+
+sudo xinit -- :$SESSION_DISPLAY & >/dev/null 2>&1
+
+sudo mv /root/.Xauthority /root/old.Xauthority
+sudo touch /root/.Xauthority
+sudo xauth generate :$SESSION_DISPLAY . trusted
+#sudo xauth add ${HOST}:0 /root/. $(xxd -l 16 -p /dev/urandom)
+
+sudo cp /root/.Xauthority /home/nagios/.Xauthority
+sudo chown nagios.nagios /home/nagios/.Xauthority
+
+#sudo startx & >/dev/null 2>&1
+
 
 #source /home/nagios/tscheck/venv/bin/activate
 
