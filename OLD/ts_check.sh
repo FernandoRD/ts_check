@@ -25,6 +25,11 @@ done
 shift $((OPTIND-1))
 
 BROKEN_LINK=`find -L /home/$SYSUSER -maxdepth 1 -type l`
+echo "-------------------------" >> /tmp/script.log
+echo $BROKEN_LINK >> /tmp/script.log
+echo "-------------------------" >> /tmp/script.log
+echo ${#BROKEN_LINK} >> /tmp/script.log
+echo "-------------------------" >> /tmp/script.log
 
 if [ ${#BROKEN_LINK} -gt 0 ];
 then
