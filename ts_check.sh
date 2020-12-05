@@ -25,7 +25,7 @@ done
 
 export DISPLAY=:$SESSION_DISPLAY.0
 
-sudo xinit -- :$SESSION_DISPLAY & >/dev/null 2>&1
+sudo xinit -- :$SESSION_DISPLAY vt$SESSION_DISPLAY & >/dev/null 2>&1
 
 sudo mv /root/.Xauthority /root/old.Xauthority
 sudo touch /root/.Xauthority
@@ -43,7 +43,7 @@ sudo chown nagios.nagios /home/nagios/.Xauthority
 sudo python3 /home/nagios/tscheck/ts_check.py -H $HOST -u $USER -p $PASSWORD -x $EXECUTABLE -r $RESILIENCE -c $CONFIDENCE_VALUE 2>/dev/null 
 estado_exec=$?
 
-ps -ef | grep xinit | grep -v grep | awk '{print $2}' | sudo xargs kill 
+ps -ef | grep "X :"$SESSION_DISPLAY | grep -v grep | awk '{print $2}' | sudo xargs kill 
 
 sleep 5
 
