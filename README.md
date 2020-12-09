@@ -21,6 +21,7 @@ This project is a python 3 script, aided with a shell script that allows Nagios 
  sudo rpm -Uvh psychotic-release-1.0.0-1.el7.psychotic.noarch.rpm
  sudo yum --enablerepo=psychotic install scrot
  sudo yum install python3 python3-tkinter python3-devel
+ pip3 install --upgrade pip
  pip3 install keyboard pyautogui numpy==1.19.3 Pillow opencv-contrib-python
  ```
 
