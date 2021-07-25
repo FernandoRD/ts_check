@@ -79,7 +79,7 @@ The pictures are actually used for the logoff process, that could be OK or NOK.
 
 ## Developing
 
-Feel free to download, use e modify it:
+Feel free to download, use and modify it:
 
 ```shell
  git clone https://github.com/FernandoRD/ts_check.git
