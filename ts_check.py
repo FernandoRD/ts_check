@@ -1,3 +1,4 @@
+#!/usr/local/nagios/libexec/python_web_checks/ts_check/venv/bin/python3.6
 import os
 import time
 import keyboard 
@@ -16,7 +17,7 @@ def main():
     host = ""
     user = ""
     password = ""
-        
+    
     my_parser = argparse.ArgumentParser(description='Conect to a windows host through RDP anda run commands .', epilog='Created by Fernando Durso')
     my_parser.add_argument('-H','--host', action='store', type=str, required=True, help='Host to connect.')
     my_parser.add_argument('-u','--user', action='store', type=str, required=True, help='Username.')
@@ -24,9 +25,12 @@ def main():
     my_parser.add_argument('-x','--exec', action='store', type=str, required=True, help='Location of xfreerdp executable.')
     my_parser.add_argument('-R','--resilience', action='store', type=int, required=False, default=2, choices=range(2, 11), help='Resilience Value.')
     my_parser.add_argument('-C','--confidence', action='store', type=float, required=False, default=0.9, choices=range(1, 11), help='Confidence Value.')
+    my_parser.add_argument('-i','--interval', action='store', type=float, required=False, default=0.5, help='Action interval time.')
     my_parser.add_argument('-w','--warning', action='store', type=int, required=False, default=5, help='WARNING threshold (seconds of execution).')
     my_parser.add_argument('-c','--critical', action='store', type=int, required=False, default=10, help='CRITICAL threshold (seconds of execution).')
-    my_parser.add_argument('-v','--vnc', action='store_true', required=False, help='VNC Server for debug.')
+    my_parser.add_argument('-v','--vnc', action='store_true', required=False, help='VNC Server see whats going on.')
+    my_parser.add_argument('-d','--debug', action='store_true', required=False, help='Debug info.')
+    my_parser.add_argument('-s','--screenshot', action='store_true', required=False, help='Take the first screenshot after successfull connection and exit.')
 
     args = my_parser.parse_args()
 
@@ -36,7 +40,10 @@ def main():
     password = args.password
     resilienceValue = args.resilience
     confidenceValue = args.confidence/10
-    use_vnc = args.vnc
+    vnc = args.vnc
+    debug = args.debug
+    interval = args.interval
+    screenshot = args.screenshot
     warning = args.warning
     critical = args.critical
 
@@ -56,9 +63,10 @@ def main():
             print("Xvfb :0 init failure... aborting...")
             sys.exit(2)
         else:
-            print(current_display)
+            if debug:
+                print(f'Current DISPLAY is {current_display}')
             import pyautogui
-    if use_vnc:
+    if vnc:
         os.system(f"x11vnc -display {current_display} -bg -forever -nopw -quiet -xkb")
         print("Please connect to this host at VNC port (5900)...continuing in 10 sec...")
         time.sleep(10)
@@ -72,69 +80,101 @@ def main():
     # Give some time to RDP to open....
     time.sleep(5)
     # Test if windows screen loaded successfully...
+    # Take the screenshot
     failure_load_screen = 0
-    for i in range(int(resilienceValue)):
+    for i in range(resilienceValue):
         try:
-            x,y = pyautogui.locateCenterOnScreen("./print.png", grayscale=True, confidence=confidenceValue)
-        except Exception:
+            x,y = pyautogui.locateCenterOnScreen("./screen.png", grayscale=True, confidence=confidenceValue)
+        except Exception as e:
             failure_load_screen += 1
+            if failure_load_screen == resilienceValue:
+                print("RDP connection failure!")
+                disp.stop()
+                sys.exit(2)
+            time.sleep(interval)
         else:
-            break 
-        time.sleep(1)
-
+            break
+    if debug:
+        print(f"Load Screen recognition failures: {failure_load_screen}")
+        
     # Set to 0 the number os recognition failures
     failure_search_buttom = 0
     failure_search = 0
 
-    if failure_load_screen == int(resilienceValue) - 1:
-        print("RDP connection failure!")
-        disp.stop()
-        sys.exit(2)
-    else:
-        # At this point we should have a working RDP connection...
-        #
-        # Here you may write your own code doing automated stuff inside your server ;-)
-        #
-        # LOGOFF PROCESS BEGINS...
-        for i in range(int(resilienceValue)):
-            try:
-                x,y = pyautogui.locateCenterOnScreen("./search_buttom.png", grayscale=True, confidence=confidenceValue)
-                time.sleep(0.5)
-            except Exception as e:
-                failure_search_buttom += 1
-            else:
-                pyautogui.moveTo(x,y)
-                time.sleep(1)
-                pyautogui.click()
-                time.sleep(1)
-                for i in range(int(resilienceValue)):
-                    try:
-                        x,y = pyautogui.locateCenterOnScreen("./search.png", grayscale=True, confidence=confidenceValue)
-                        time.sleep(0.5)
-                    except Exception as e:
-                        failure_search += 1
-                    else:
-                        pyautogui.moveTo(x,y)
-                        time.sleep(1)
-                        pyautogui.click()
-                        time.sleep(1)
-                        pyautogui.typewrite('logoff', interval=0.1)
-                        pyautogui.press('enter')
-                        print("RDP connection success!")
-                        total_time=time.time() - start_time
-                    break
-        if use_vnc:
-            print("Statistics (Reconition failures): Load Screen: {}, Search Buttom: {}, Search: {}".format(failure_load_screen, failure_search_buttom, failure_search))
-        disp.stop()
-                        
+    # At this point we should have a working RDP connection...
+    if screenshot:
+        try:
+            pyautogui.screenshot('./screen.png')
+        except Exception as e:
+            print(f'Screenshot failed...{e}')
+            disp.stop()
+            sys.exit(2)
+        else:
+            print('Screenshot saved...')
+            disp.stop()
+            sys.exit(0)
+    #
+    # Here you may write your own code doing automated stuff inside your server ;-)
+    #
+    # LOGOFF PROCESS BEGINS...
+    for i in range(resilienceValue):
+        try:
+            x,y = pyautogui.locateCenterOnScreen("./search_buttom.png", grayscale=True, confidence=confidenceValue)
+        except Exception as e:
+            failure_search_buttom += 1
+            if failure_search_buttom == resilienceValue:
+                print("Could not find search buttom!")
+                disp.stop()
+                sys.exit(2)
+            time.sleep(interval)
+        else:
+            pyautogui.moveTo(x,y)
+            time.sleep(interval)
+            pyautogui.click()
+            break
+
+    if debug:
+        print(f"Search Buttom recognition failures: {failure_search_buttom}")
+        pyautogui.screenshot('./screenshot_failure_search_buttom.png')
+
+    for i in range(resilienceValue):
+        try:
+            x,y = pyautogui.locateCenterOnScreen("./search.png", grayscale=True, confidence=confidenceValue)                    
+        except Exception as e:
+            failure_search += 1
+            if failure_search == resilienceValue:
+                print("Could not find search field!")
+                disp.stop()
+                sys.exit(2)
+            time.sleep(interval)
+        else:
+            pyautogui.moveTo(x,y)
+            time.sleep(interval)
+            pyautogui.typewrite('logoff', interval=0.1)
+            pyautogui.press('enter')
+            print("RDP connection success!")
+            total_time=time.time() - start_time
+            break
+
+    if debug:
+        print(f"Search recognition failures: {failure_search}")
+        pyautogui.screenshot('./screenshot_failure_search.png')
+
+    if debug:
+        print(f"Statistics (Reconition failures): Load Screen: {failure_load_screen}, Search Buttom: {failure_search_buttom}, Search: {failure_search}")
+    # Stop display after a successfull execution.     
+    disp.stop()
+
+    
+
     if total_time < warning:
-        print("OK: Execution time: {:.2f} s | exec_time={:.2f}s;{};{};0;{}".format(total_time, total_time, warning, critical, critical*2))
+        print(f"OK: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
         exit(0)
     elif total_time > warning and total_time < critical:
-        print("WARNING: Execution time: {:.2f} s | exec_time={:.2f}s;{};{};0;{}".format(total_time, total_time,warning, critical, critical*2))
+        print(f"WARNING: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
         exit(1)
     elif total_time > critical:
-        print("CRITICAL: Execution time: {:.2f} s | exec_time={:.2f}s;{};{};0;{}".format(total_time, total_time, warning, critical, critical*2))
+        print(f"CRITICAL: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
         exit(2)
 
 if __name__ == "__main__":

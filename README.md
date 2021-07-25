@@ -48,21 +48,6 @@ Replace:
 
 ```
 
-Edit /etc/sudoers for user nagios that runs the script
-Quickest way...
-
-```shell
-# visudo
-
-    # NEEDED TO ALLOW NAGIOS TO CHECK SERVICE STATUS
-    Defaults:nagios !requiretty
-    nagios ALL=(ALL) NOPASSWD: ALL
-
-    # ASTERISK-SPECIFIC CHECKS
-    # NOTE: You can uncomment the following line if you are monitoring Asterisk locally
-    #nagios ALL=NOPASSWD: /usr/local/nagios/libexec/check_asterisk_sip_peers.sh, /usr/local/nagios/libexec/nagisk.pl, /usr/sbin/asterisk
-```
-
 ## Script execution
 
 When Nagios calls the script it creates a Xvfb and uses it to connect to the windows server and recognizes if the connection was successfull or not, and then executes.
