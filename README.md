@@ -45,10 +45,10 @@ For debuging purposes we can install a VNC server to actually see whats going on
  su - nagios
  cd /usr/local/nagios/libexec
  mkdir ts_check
- python3.6 -m venv venv
+ python3.X -m venv venv
  source venv/bin/activate
- python3.6 -m pip install --upgrade pip
- python3.6 -m pip install xlib Pillow opencv-python pyautogui keyboard pyvirtualdisplay
+ python3.X -m pip install --upgrade pip
+ python3.X -m pip install xlib Pillow opencv-python pyautogui keyboard pyvirtualdisplay
 
  edit file venv/lib64/python3.X/site-packages/pyscreeze/__init__.py to prevent error messages from scrot:
 
