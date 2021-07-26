@@ -150,14 +150,15 @@ def main():
             pyautogui.moveTo(x,y)
             time.sleep(interval)
             pyautogui.typewrite('logoff', interval=0.1)
+            if debug:
+                print(f"Search recognition failures: {failure_search}")
+                pyautogui.screenshot('./screenshot_failure_search.png')
             pyautogui.press('enter')
             print("RDP connection success!")
             total_time=time.time() - start_time
             break
 
-    if debug:
-        print(f"Search recognition failures: {failure_search}")
-        pyautogui.screenshot('./screenshot_failure_search.png')
+    
 
     if debug:
         print(f"Statistics (Reconition failures): Load Screen: {failure_load_screen}, Search Buttom: {failure_search_buttom}, Search: {failure_search}")
