@@ -1,4 +1,4 @@
-#!/usr/local/nagios/libexec/python_web_checks/ts_check/venv/bin/python3.6
+#!/usr/local/nagios/libexec/python_web_checks/ts_check/venv/bin/python3.9
 import os
 import time
 import keyboard 
@@ -53,7 +53,8 @@ def main():
     try:
         current_display = str(os.environ.get('DISPLAY'))
     except:
-        print("Starting Xvfb default...")
+        if debug:
+            print("Starting Xvfb default...")
         os.system("Xvfb :0")
     else:
         try:
@@ -81,18 +82,21 @@ def main():
     # Test if windows screen loaded successfully...
     # Take the screenshot
     failure_load_screen = 0
-    for i in range(resilienceValue):
+    i = 0
+    while i < resilienceValue:
         try:
             x,y = pyautogui.locateCenterOnScreen("./screen.png", grayscale=True, confidence=confidenceValue)
         except Exception as e:
             failure_load_screen += 1
             if failure_load_screen == resilienceValue:
-                print("RDP connection failure!")
+                print("CRITICAL: RDP connection failure!")
                 disp.stop()
                 sys.exit(2)
             time.sleep(interval)
+            i += 1
         else:
-            break
+            i += resilienceValue
+                    
     if debug:
         print(f"Load Screen recognition failures: {failure_load_screen}")
         
@@ -116,66 +120,78 @@ def main():
     # Here you may write your own code doing automated stuff inside your server ;-)
     #
     # LOGOFF PROCESS BEGINS...
-    for i in range(resilienceValue):
+    i = 0
+    while i < resilienceValue:
         try:
             x,y = pyautogui.locateCenterOnScreen("./search_buttom.png", grayscale=True, confidence=confidenceValue)
         except Exception as e:
             failure_search_buttom += 1
             if failure_search_buttom == resilienceValue:
-                print("Could not find search buttom!")
+                print("CRITICAL: Could not find search buttom!")
+                if debug:
+                    print(f"Search Buttom recognition failures: {failure_search_buttom}")
+                    pyautogui.screenshot('./screenshot_failure_search_buttom.png')
                 disp.stop()
                 sys.exit(2)
             time.sleep(interval)
+            i += 1
+            print("Aqui falhou 1")
         else:
             pyautogui.moveTo(x,y)
             time.sleep(interval)
             pyautogui.click()
-            break
-
-    if debug:
-        print(f"Search Buttom recognition failures: {failure_search_buttom}")
-        pyautogui.screenshot('./screenshot_failure_search_buttom.png')
-
-    for i in range(resilienceValue):
+            if debug:
+                print(f"Search Buttom recognition failures: {failure_search_buttom}")
+                pyautogui.screenshot('./screenshot_failure_search_buttom.png')
+            i += resilienceValue
+            print("Aqui achou 1")
+    
+    i = 0
+    while i < resilienceValue:
         try:
             x,y = pyautogui.locateCenterOnScreen("./search.png", grayscale=True, confidence=confidenceValue)                    
         except Exception as e:
             failure_search += 1
             if failure_search == resilienceValue:
-                print("Could not find search field!")
+                print("CRITICAL: Could not find search field!")
+                if debug:
+                    print(f"Search recognition failures: {failure_search}")
+                    pyautogui.screenshot('./screenshot_failure_search.png')
                 disp.stop()
                 sys.exit(2)
             time.sleep(interval)
+            i += 1
+            print("Aqui falhou 2")
         else:
             pyautogui.moveTo(x,y)
             time.sleep(interval)
-            pyautogui.typewrite('logoff', interval=0.1)
+            pyautogui.typewrite('logoff', interval=0.2)
             if debug:
                 print(f"Search recognition failures: {failure_search}")
                 pyautogui.screenshot('./screenshot_failure_search.png')
             pyautogui.press('enter')
-            print("RDP connection success!")
             total_time=time.time() - start_time
-            break
-
-    
+            i += resilienceValue
+            print("Aqui achou 2")
 
     if debug:
         print(f"Statistics (Reconition failures): Load Screen: {failure_load_screen}, Search Buttom: {failure_search_buttom}, Search: {failure_search}")
     # Stop display after a successfull execution.     
     disp.stop()
 
-    
-
-    if total_time < warning:
-        print(f"OK: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
-        exit(0)
-    elif total_time > warning and total_time < critical:
-        print(f"WARNING: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
-        exit(1)
-    elif total_time > critical:
-        print(f"CRITICAL: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
-        exit(2)
+    try:
+        if total_time < warning:
+            print(f"OK: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
+            exit(0)
+        elif total_time > warning and total_time < critical:
+            print(f"WARNING: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
+            exit(1)
+        elif total_time > critical:
+            print(f"CRITICAL: Execution time: {total_time:.2f} s | exec_time={total_time:.2f}s;{warning};{critical};0;{critical*2}")
+            exit(2)
+    except Exception as e:
+        print(f"CRITICAL: RDP connection failure! {e}")
+        sys.exit(2)
 
 if __name__ == "__main__":
    main()
