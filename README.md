@@ -15,11 +15,12 @@ All the tests were made in CENTOS 7 host with it´s "Stock" python3 version (3.6
  sudo yum install -y epel-release giflib imlib2 xfreerdp xorg-x11-server-Xvfb python3 python3-tkinter python3-devel x11vnc xdpyinfo
 ```
 
-## Installing dependencies (compile python)
+## Installing dependencies (build python from source)
 
 ```shell
  sudo yum update -y
- sudo yum install -y epel-release giflib imlib2 xfreerdp xorg-x11-server-Xvfb x11vnc xdpyinfo tcl-devel tk-devel ncurses-devel bzip2-devel gdbm-devel xz-devel sqlite-devel uuid-devel readline-devel
+ sudo yum -y groupinstall "Development Tools"
+ sudo yum install -y epel-release giflib imlib2 xfreerdp xorg-x11-server-Xvfb x11vnc xdpyinfo gcc openssl-devel libffi-devel tcl-devel tk-devel ncurses-devel bzip2-devel gdbm-devel xz-devel sqlite-devel uuid-devel readline-devel
 ```
 
 ## VNC

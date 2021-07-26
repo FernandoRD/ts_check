@@ -9,7 +9,6 @@ import sys
 from pyvirtualdisplay import Display
 import Xlib.display
 import argparse
-from numpy import arange
 
 def main():
 
