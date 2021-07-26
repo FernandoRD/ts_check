@@ -6,7 +6,7 @@ Plugin for Nagios fully conects to a windows host using TS (RDP) allowing automa
 
 This project is a python 3 script, using Xvfb, PyVirtualDisplay wrapper and PyautoGui and optionaly x11vnc for debug purposes.
 
-All the tests were made in CENTOS 7 host with it´s "Stock" python3 version (3.6) and a Windows 2016 host.
+All the tests were made in CENTOS 7 host with it´s "Stock" python3 version (3.6) and with python 3.9.6 built from source targeting a Windows 2016 host.
 
 ## Installing dependencies (system packages)
 
