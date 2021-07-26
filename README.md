@@ -28,9 +28,9 @@ All the tests were made in CENTOS 7 host with it´s "Stock" python3 version (3.6
 For debuging purposes we can install a VNC server to actually see whats going on when the connection is made. We need to open the VNC port:
 
 ```shell
-firewall-cmd --permanent --add-port=5900/tcp
-systemctl reload firewalld
- ´´´
+ firewall-cmd --permanent --add-port=5900/tcp
+ systemctl reload firewalld
+```
 
 ## Installing other dependencies
 
