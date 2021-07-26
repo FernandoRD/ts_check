@@ -12,8 +12,24 @@ All the tests were made in CENTOS 7 host with it´s "Stock" python3 version (3.6
 
 ```shell
  sudo yum update -y
- sudo yum install -y epel-release giflib imlib2 xfreerdp xorg-x11-server-Xvfb python3 python3-tkinter python3-devel x11vnc
+ sudo yum install -y epel-release giflib imlib2 xfreerdp xorg-x11-server-Xvfb python3 python3-tkinter python3-devel x11vnc xdpyinfo
 ```
+
+## Installing dependencies (compile python)
+
+```shell
+ sudo yum update -y
+ sudo yum install -y epel-release giflib imlib2 xfreerdp xorg-x11-server-Xvfb x11vnc xdpyinfo tcl-devel tk-devel ncurses-devel bzip2-devel gdbm-devel xz-devel sqlite-devel uuid-devel readline-devel
+```
+
+## VNC
+
+For debuging purposes we can install a VNC server to actually see whats going on when the connection is made. We need to open the VNC port:
+
+```shell
+firewall-cmd --permanent --add-port=5900/tcp
+systemctl reload firewalld
+ ´´´
 
 ## Installing other dependencies
 
@@ -33,9 +49,9 @@ All the tests were made in CENTOS 7 host with it´s "Stock" python3 version (3.6
  python3.6 -m pip install --upgrade pip
  python3.6 -m pip install xlib Pillow opencv-python pyautogui keyboard pyvirtualdisplay
 
- edit file venv/lib64/python3.6/site-packages/pyscreeze/__init__.py to prevent error messages from scrot:
+ edit file venv/lib64/python3.X/site-packages/pyscreeze/__init__.py to prevent error messages from scrot:
 
-Replace:
+ Replace:
 
  if scrotExists:
         subprocess.call(['scrot', '-z', tmpFilename])
