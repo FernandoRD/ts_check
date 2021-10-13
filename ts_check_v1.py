@@ -75,7 +75,7 @@ def main():
     # Start measuring execution time
     start_time=time.time()
     # Start RDP Connection...
-    execCommand = "export DISPLAY={} && {} /v:{} /u:{} /p:{} /cert:tofu /f /bpp:15 +compression -themes -wallpaper /audio-mode:2 >/dev/null 2>&1 &".format(current_display, freerdpLocation, host, user, password)
+    execCommand = "export DISPLAY={} && {} /v:{} /u:{} /p:{} /cert:tofu /f /bpp:15 +compression -wallpaper /audio-mode:2 >/dev/null 2>&1 &".format(current_display, freerdpLocation, host, user, password)
     os.system(execCommand)
     # Give some time to RDP to open....
     time.sleep(5)

@@ -2,7 +2,7 @@
 
 > Connect to a host via RDP service, opens windows screen allowing automated interaction in completely headless operation.
 
-Plugin for Nagios fully conects to a windows host using TS (RDP) allowing automated interaction returning OK, WARNING, CRITICAL states as needed.
+Plugin for Nagios that connects to a windows host using TS (RDP) allowing automated interaction returning OK, WARNING, CRITICAL states as needed.
 
 This project is a python 3 script, using Xvfb, PyVirtualDisplay wrapper and PyautoGui and optionaly x11vnc for debug purposes.
 
