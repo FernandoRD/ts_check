@@ -2,7 +2,7 @@
 
 > Connect to a host via RDP service, opens windows screen allowing automated interaction in completely headless operation.
 
-Plugin for Nagios that connects to a windows host using TS (RDP) allowing automated interaction returning OK, WARNING, CRITICAL states as needed.
+Plugin for Zabbix that connects to a windows host using TS (RDP) allowing automated interaction returning OK, WARNING, CRITICAL states as needed.
 
 This project is a python 3 script, using Xvfb, PyVirtualDisplay wrapper and PyautoGui and optionaly x11vnc for debug purposes.
 
@@ -43,7 +43,7 @@ All the tests were made in Ubuntu 22.04 host targeting a Windows 2016 host.
 
 ## Script execution
 
-When Nagios calls the script it creates a Xvfb and uses it to connect to the windows server and recognizes if the connection was successfull or not, and then executes.
+When Zabbix calls the script it creates a Xvfb and uses it to connect to the windows server and recognizes if the connection was successfull or not, and then executes.
 
 ### Pictures used in the actual script version
 
@@ -60,11 +60,7 @@ The pictures are actually used for the logoff process, that could be OK or NOK.
 1) Reads print.png to check if the screen element apears.
 2) Reads search_button.png to click in search.
 3) Reads search.png to click in the field and writes "logoff" and send an ENTER.
-
-> For a NOK connection
-
-1) Reads button_close.png to close the RDP window in gnome.
-2) Obs:
+4) Obs:
 
 * There are some Windows 2016 Server pictures in the repository that I used to develop.
 
