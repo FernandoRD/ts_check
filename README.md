@@ -84,11 +84,7 @@ The pictures are actually used for the logoff process, that could be OK or NOK.
 1) Reads print.png to check if the screen element apears.
 2) Reads search_button.png to click in search.
 3) Reads search.png to click in the field and writes "logoff" and send an ENTER.
-
-> For a NOK connection
-
-1) Reads button_close.png to close the RDP window in gnome.
-2) Obs:
+4) Obs:
 
 * There are some Windows 2016 Server pictures in the repository that I used to develop.
 
