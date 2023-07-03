@@ -2,48 +2,24 @@
 
 > Connect to a host via RDP service, opens windows screen allowing automated interaction in completely headless operation.
 
-Plugin for Nagios that connects to a windows host using TS (RDP) allowing automated interaction returning OK, WARNING, CRITICAL states as needed.
+Plugin for Zabbix that connects to a windows host using TS (RDP) allowing automated interaction returning OK, WARNING, CRITICAL states as needed.
 
 This project is a python 3 script, using Xvfb, PyVirtualDisplay wrapper and PyautoGui and optionaly x11vnc for debug purposes.
 
-All the tests were made in CENTOS 7 host with it´s "Stock" python3 version (3.6) and with python 3.9.6 built from source targeting a Windows 2016 host.
+All the tests were made in Ubuntu 22.04 host targeting a Windows 2016 host.
 
 ## Installing dependencies (system packages)
 
 ```shell
- sudo yum update -y
- sudo yum install -y epel-release giflib imlib2 xfreerdp xorg-x11-server-Xvfb python3 python3-tkinter python3-devel x11vnc xdpyinfo
+ sudo apt update -y
+ sudo apt install giflib-tools libimlib2 xvfb x11vnc x11-utils freerdp2-x11 giblib1 scrot python3.10-venv python3-tk python3-dev python3-pip
 ```
-
-## Installing dependencies (build python from source)
-
-```shell
- sudo yum update -y
- sudo yum -y groupinstall "Development Tools"
- sudo yum install -y epel-release giflib imlib2 xfreerdp xorg-x11-server-Xvfb x11vnc xdpyinfo gcc openssl-devel libffi-devel tcl-devel tk-devel ncurses-devel bzip2-devel gdbm-devel xz-devel sqlite-devel uuid-devel readline-devel
-```
-
-## VNC
-
-For debuging purposes we can install a VNC server to actually see whats going on when the connection is made. We need to open the VNC port:
-
-```shell
- firewall-cmd --permanent --add-port=5900/tcp
- systemctl reload firewalld
-```
-
-## Installing other dependencies
-
-```shell
- rpm -ivh http://mirror.ghettoforge.org/distributions/gf/el/7/gf/x86_64/giblib-1.2.4-27.gf.el7.x86_64.rpm
- rpm -ivh http://packages.psychotic.ninja/7/base/x86_64/RPMS/scrot-0.8-12.el7.psychotic.x86_64.rpm
- ```
 
 ## Create virtualenv and instaling Python dependencies
 
 ```shell
- su - nagios
- cd /usr/local/nagios/libexec
+ su - zabbix (need to edit /etc/passwd to allow this)
+ cd /usr/lib/zabbix/externalscripts
  mkdir ts_check
  python3.X -m venv venv
  source venv/bin/activate
@@ -67,7 +43,7 @@ For debuging purposes we can install a VNC server to actually see whats going on
 
 ## Script execution
 
-When Nagios calls the script it creates a Xvfb and uses it to connect to the windows server and recognizes if the connection was successfull or not, and then executes.
+When Zabbix calls the script it creates a Xvfb and uses it to connect to the windows server and recognizes if the connection was successfull or not, and then executes.
 
 ### Pictures used in the actual script version
 
@@ -84,11 +60,7 @@ The pictures are actually used for the logoff process, that could be OK or NOK.
 1) Reads print.png to check if the screen element apears.
 2) Reads search_button.png to click in search.
 3) Reads search.png to click in the field and writes "logoff" and send an ENTER.
-
-> For a NOK connection
-
-1) Reads button_close.png to close the RDP window in gnome.
-2) Obs:
+4) Obs:
 
 * There are some Windows 2016 Server pictures in the repository that I used to develop.
 
