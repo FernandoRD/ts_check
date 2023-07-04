@@ -12,4 +12,4 @@ WORKDIR /app
 COPY ts_check.py .
 EXPOSE 5900
 ENV DISPLAY :0
-ENTRYPOINT [ "/usr/bin/python3", "ts_check_v2.py" ]
+ENTRYPOINT [ "/usr/bin/python3", "ts_check.py" ]
